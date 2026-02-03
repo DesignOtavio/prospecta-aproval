@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'Britanica';
+    src: url('./Font/Britanica Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Britanica';
+    src: url('./Font/Britanica Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Britanica';
+    src: url('./Font/Britanica Regular Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Adding Expanded variant for headers if desired */
+@font-face {
+    font-family: 'Britanica Expanded';
+    src: url('./Font/Britanica Expanded Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+}

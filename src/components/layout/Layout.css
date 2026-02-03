@@ -1,0 +1,34 @@
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    /* Very light gray bg */
+}
+
+.layout__content {
+    flex: 1;
+    margin-left: 260px;
+    /* Width of Sidebar */
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 260px);
+}
+
+.layout__main {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Container for page content */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .layout__content {
+        margin-left: 0;
+        width: 100%;
+    }
+}

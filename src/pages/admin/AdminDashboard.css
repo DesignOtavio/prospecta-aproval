@@ -1,0 +1,280 @@
+/* Header Actions Spacing */
+.header-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Badge Tweaks for Table */
+.admin-table td .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.75rem;
+    white-space: nowrap;
+    min-width: 80px;
+    /* Ensure uniform width */
+}
+
+/* Ensure table cells have padding */
+.admin-table td,
+.admin-table th {
+    padding: 1rem;
+}
+
+/* Reuse shared styles where possible */
+
+/* Stats structure is handled by ClientDashboard.css mostly, but we define specifics here */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-gray-100);
+}
+
+.stat-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.stat-title {
+    color: var(--color-gray-500);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-gray-900);
+}
+
+.posts-grid-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.post-thumb-card {
+    background: white;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-gray-200);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.post-thumb-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.thumb-preview {
+    height: 120px;
+    background-color: var(--color-gray-100);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumb-video-placeholder,
+.thumb-placeholder {
+    font-size: 2rem;
+    color: var(--color-gray-400);
+}
+
+.thumb-placeholder {
+    font-size: 0.75rem;
+}
+
+.thumb-status {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.status-dot {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.status-dot.pending {
+    background-color: var(--color-warning);
+}
+
+.status-dot.approved {
+    background-color: var(--color-success);
+}
+
+.status-dot.changes {
+    background-color: var(--color-error);
+}
+
+.thumb-info {
+    padding: 0.75rem;
+}
+
+.thumb-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.25rem;
+}
+
+.thumb-client {
+    font-size: 0.75rem;
+    color: var(--color-blue-primary);
+    margin-bottom: 0.25rem;
+}
+
+.thumb-date {
+    font-size: 0.7rem;
+    color: var(--color-gray-400);
+}
+
+/* Modern Admin Table */
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-table th {
+    background: var(--color-surface-100);
+    color: var(--color-gray-medium);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--color-gray-light);
+}
+
+.admin-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--color-surface-100);
+    vertical-align: middle;
+    color: var(--color-gray-dark);
+}
+
+.admin-table tr:hover td {
+    background-color: var(--color-surface-50);
+}
+
+.client-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.client-avatar-mini {
+    width: 28px;
+    height: 28px;
+    background: var(--color-blue-primary);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.action-icon-btn {
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.action-icon-btn:hover {
+    background-color: var(--color-gray-light);
+}
+
+.action-icon-btn.delete:hover {
+    background-color: #fee2e2;
+}
+
+.container {
+    max-width: 1400px;
+    padding: var(--spacing-8);
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-navy);
+}
+
+/* Activity List Compact */
+.activity-list-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item-compact {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-surface-100);
+}
+
+.activity-item-compact:last-child {
+    border-bottom: none;
+}
+
+.activity-avatar-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--color-surface-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--color-gray-medium);
+}
+
+.activity-avatar-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.activity-content-mini p {
+    font-size: 0.875rem;
+    margin-bottom: 2px;
+    color: var(--color-gray-dark);
+}
+
+.activity-time-mini {
+    font-size: 0.75rem;
+    color: var(--color-gray-medium);
+}

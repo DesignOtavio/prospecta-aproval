@@ -1,0 +1,17 @@
+.tab-btn {
+    transition: all 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+}
+
+.tab-btn:hover {
+    color: var(--color-blue-primary);
+    background-color: var(--color-surface-50);
+}
+
+.tab-btn.active {
+    color: var(--color-blue-primary);
+    border-bottom: 2px solid var(--color-blue-primary);
+}

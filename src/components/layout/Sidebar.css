@@ -1,0 +1,106 @@
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #ffffff;
+    /* Dark navy color */
+    color: #475569;
+    /* Dark slate for light bg */
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    transition: all 0.3s ease;
+    border-right: 1px solid #e2e8f0;
+}
+
+.sidebar__logo {
+    margin-bottom: 2.5rem;
+    padding: 0 0.5rem;
+}
+
+.sidebar__logo img {
+    height: 32px;
+    /* Removed filter to show original logo colors */
+}
+
+.sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.sidebar__link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.sidebar__link:hover {
+    background-color: #f1f5f9;
+    /* Light slate hover */
+    color: #1e293b;
+    /* Darker text on hover */
+}
+
+.sidebar__link.active {
+    background-color: #2563eb;
+    /* Blue primary */
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+
+.sidebar__link .icon,
+.sidebar__logout .icon {
+    font-size: 1.5rem;
+    /* 24px for Phosphor Icons */
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.sidebar__footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+    margin-top: auto;
+}
+
+.sidebar__logout {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: none;
+    border: none;
+    color: #ef4444;
+    /* Red for logout */
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.sidebar__logout:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* Tablet/Mobile Helper - Hidden by default on desktop if we go responsive later */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
