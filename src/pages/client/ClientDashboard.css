@@ -251,3 +251,38 @@
     border-radius: var(--radius-lg);
     border: 2px dashed var(--color-gray-200);
 }
+
+@media (max-width: 768px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .tabs-container {
+        overflow-x: auto;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .tab-btn {
+        white-space: nowrap;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .posts-grid-modern {
+        grid-template-columns: 1fr;
+    }
+
+    .post-card-modern {
+        max-width: 100%;
+    }
+
+    .card-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .card-content {
+        padding: 1rem;
+    }
+}

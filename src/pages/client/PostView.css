@@ -148,9 +148,14 @@
 @media (max-width: 640px) {
     .post-view__actions {
         flex-direction: column;
+        gap: 0.5rem;
     }
 
     .post-view__share {
         flex-direction: column;
+    }
+
+    .post-view__main {
+        margin-bottom: 2rem;
     }
 }

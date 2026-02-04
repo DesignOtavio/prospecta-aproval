@@ -112,3 +112,29 @@
     border: 2px solid white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
+
+.topbar__logo--mobile {
+    display: none;
+}
+
+.topbar__logo--mobile img {
+    height: 30px;
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 0 1rem;
+    }
+
+    .topbar__logo--mobile {
+        display: block;
+    }
+
+    .topbar__search {
+        display: none;
+    }
+
+    .profile-info {
+        display: none;
+    }
+}

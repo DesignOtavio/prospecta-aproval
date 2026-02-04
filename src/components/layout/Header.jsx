@@ -14,6 +14,9 @@ const Header = () => {
 
     return (
         <header className="header topbar">
+            <div className="topbar__logo--mobile">
+                <img src="/logo-prospecta.png" alt="Prospecta" />
+            </div>
             <div className="topbar__search">
                 <i className="ph ph-magnifying-glass icon search-icon"></i>
                 <input type="text" placeholder="Buscar postagens..." className="search-input" />

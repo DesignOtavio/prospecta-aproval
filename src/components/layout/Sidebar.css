@@ -97,10 +97,6 @@
 /* Tablet/Mobile Helper - Hidden by default on desktop if we go responsive later */
 @media (max-width: 768px) {
     .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
+        display: none;
     }
 }

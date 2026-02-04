@@ -227,6 +227,7 @@
 @media (max-width: 768px) {
     .post-detail-media {
         min-height: 250px;
+        max-height: 40vh;
     }
 
     .post-detail-title {
@@ -235,6 +236,23 @@
 
     .post-detail-content {
         padding: var(--spacing-4);
+    }
+
+    .post-metadata {
+        flex-direction: column;
+        gap: var(--spacing-3);
+    }
+
+    .post-detail-sidebar {
+        min-height: 500px;
+        /* More space for comments on mobile */
+    }
+
+    .activity-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.05);
     }
 }
 

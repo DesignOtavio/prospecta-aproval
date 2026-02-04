@@ -278,3 +278,75 @@ h1 {
     font-size: 0.75rem;
     color: var(--color-gray-medium);
 }
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .header-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .stat-box {
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .posts-grid-compact {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .post-thumb-card {
+        display: flex;
+        height: 100px;
+    }
+
+    .thumb-preview {
+        width: 100px;
+        height: 100%;
+        flex-shrink: 0;
+    }
+
+    .thumb-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0.75rem;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+}
