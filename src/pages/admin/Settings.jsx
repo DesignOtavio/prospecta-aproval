@@ -3,6 +3,7 @@ import Layout from '../../components/layout/Layout';
 import Card from '../../components/common/Card';
 import WebhookConfig from '../../components/admin/WebhookConfig';
 import ActivityLogs from '../../components/admin/ActivityLogs';
+import AdminManagement from '../../components/admin/AdminManagement';
 import './Settings.css';
 
 const Settings = () => {
@@ -16,21 +17,27 @@ const Settings = () => {
                     <p className="text-gray">Gerencie as integrações e monitore o sistema.</p>
                 </div>
 
-                <div className="settings-tabs mb-6 flex gap-4 border-b border-gray-200">
+                <div className="settings-tabs mb-6 flex gap-4 border-b border-gray-200 overflow-x-auto">
                     <button
-                        className={`tab-btn px-4 py-2 ${activeTab === 'webhooks' ? 'active border-b-2 border-blue-600 text-blue-600 font-medium' : 'text-gray-500'}`}
+                        className={`tab-btn px-4 py-2 whitespace-nowrap ${activeTab === 'webhooks' ? 'active border-b-2 border-blue-600 text-blue-600 font-medium' : 'text-gray-500'}`}
                         onClick={() => setActiveTab('webhooks')}
                     >
                         Webhooks
                     </button>
                     <button
-                        className={`tab-btn px-4 py-2 ${activeTab === 'logs' ? 'active border-b-2 border-blue-600 text-blue-600 font-medium' : 'text-gray-500'}`}
+                        className={`tab-btn px-4 py-2 whitespace-nowrap ${activeTab === 'admins' ? 'active border-b-2 border-blue-600 text-blue-600 font-medium' : 'text-gray-500'}`}
+                        onClick={() => setActiveTab('admins')}
+                    >
+                        Gerenciar Admins
+                    </button>
+                    <button
+                        className={`tab-btn px-4 py-2 whitespace-nowrap ${activeTab === 'logs' ? 'active border-b-2 border-blue-600 text-blue-600 font-medium' : 'text-gray-500'}`}
                         onClick={() => setActiveTab('logs')}
                     >
                         Logs de Atividade
                     </button>
                     <button
-                        className={`tab-btn px-4 py-2 ${activeTab === 'general' ? 'active border-b-2 border-blue-600 text-blue-600 font-medium' : 'text-gray-500'}`}
+                        className={`tab-btn px-4 py-2 whitespace-nowrap ${activeTab === 'general' ? 'active border-b-2 border-blue-600 text-blue-600 font-medium' : 'text-gray-500'}`}
                         onClick={() => setActiveTab('general')}
                     >
                         Geral
@@ -41,6 +48,12 @@ const Settings = () => {
                     {activeTab === 'webhooks' && (
                         <Card padding="lg">
                             <WebhookConfig />
+                        </Card>
+                    )}
+
+                    {activeTab === 'admins' && (
+                        <Card padding="lg">
+                            <AdminManagement />
                         </Card>
                     )}
 
