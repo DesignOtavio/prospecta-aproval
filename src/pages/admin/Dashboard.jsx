@@ -51,6 +51,13 @@ const AdminDashboard = () => {
         loadData();
     };
 
+    const handleShareClient = (client) => {
+        const appUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+        const message = `Olá ${client.name}! Suas postagens na Prospecta já estão prontas para aprovação. 🚀\n\nAcesse aqui: ${appUrl}\n\nE-mail de acesso: ${client.email}`;
+        const encodedMessage = encodeURIComponent(message);
+        window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+    };
+
     const handleDeleteClient = async (clientId) => {
         if (!window.confirm('Tem certeza que deseja remover este cliente? Todas as postagens vinculadas podem ser afetadas.')) return;
 
@@ -251,6 +258,14 @@ const AdminDashboard = () => {
                                         <td className="text-gray">{formatRelativeTime(client.created_at)}</td>
                                         <td>
                                             <div className="table-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                                                <button
+                                                    className="action-icon-btn share"
+                                                    onClick={() => handleShareClient(client)}
+                                                    title="Compartilhar Link"
+                                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#25D366' }}
+                                                >
+                                                    <i className="ph ph-whatsapp-logo icon" style={{ fontSize: '1.2rem' }}></i>
+                                                </button>
                                                 <button
                                                     className="action-icon-btn delete"
                                                     onClick={() => handleDeleteClient(client.id)}
