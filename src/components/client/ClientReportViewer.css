@@ -1,0 +1,448 @@
+.client-reports-viewer {
+    display: flex;
+    flex-direction: column;
+    /* Sempre coluna agora */
+    gap: 0;
+    /* Remover gap para colar a barra */
+    height: calc(100vh - 180px);
+    /* Ajustar altura */
+    min-height: 600px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.reports-sidebar {
+    width: 100%;
+    background: var(--bg-primary);
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: row;
+    /* Horizontal */
+    align-items: center;
+    padding: 1rem 1.5rem;
+    gap: 2rem;
+}
+
+.reports-sidebar h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.reports-menu {
+    display: flex;
+    flex-direction: row;
+    /* Horizontal tabs */
+    gap: 0.5rem;
+    overflow-x: auto;
+    /* Scroll horizontal */
+    overflow-y: hidden;
+    flex: 1;
+    /* Ocupar espaço restante */
+    align-items: center;
+    padding-bottom: 2px;
+    /* Espaço para scrollbar se necessário */
+}
+
+.reports-menu::-webkit-scrollbar {
+    height: 4px;
+}
+
+.reports-menu::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
+}
+
+.report-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 100px;
+    /* Pílula */
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+.report-menu-item:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.report-menu-item.active {
+    background: var(--text-primary);
+    /* Alto contraste (Preto ou Cinza Escuro) */
+    border-color: var(--text-primary);
+    color: var(--bg-primary);
+    /* Texto claro */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.report-menu-item.active i {
+    color: var(--bg-primary);
+}
+
+.report-menu-item.active .report-item-text span {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.report-menu-item i {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.report-item-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.report-item-text strong {
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.report-item-text span {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    display: none;
+    /* Esconder data para ficar compacto, ou usar display: block se quiser */
+}
+
+.report-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-primary);
+}
+
+.report-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.report-header h2 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+}
+
+.report-header p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* Action buttons group */
+.report-header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.report-action-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.15rem;
+}
+
+.report-action-btn:hover {
+    background: var(--bg-tertiary, var(--bg-secondary));
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.report-action-btn:active {
+    transform: translateY(0);
+}
+
+/* Iframe wrapper */
+.iframe-wrapper,
+.raw-iframe-container {
+    flex: 1;
+    position: relative;
+    background: #fff;
+    height: 100%;
+}
+
+.iframe-wrapper iframe,
+.raw-iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.iframe-wrapper.fullscreen-mode {
+    background: #fff;
+}
+
+.iframe-wrapper.fullscreen-mode iframe {
+    min-height: 100vh !important;
+}
+
+/* Loading Overlay */
+.iframe-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 10;
+    animation: fadeIn 0.3s ease;
+}
+
+.iframe-loader p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Error State */
+.iframe-error-state {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem;
+}
+
+.iframe-error-state i {
+    font-size: 3.5rem;
+    color: var(--warning-color, #f59e0b);
+    opacity: 0.8;
+}
+
+.iframe-error-state h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--text-primary);
+}
+
+.iframe-error-state p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    max-width: 400px;
+    line-height: 1.5;
+}
+
+.error-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.retry-btn,
+.open-external-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border-color);
+}
+
+.retry-btn {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.retry-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.open-external-btn {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.open-external-btn:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* Spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(var(--primary-rgb, 59, 130, 246), 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Empty / Loading states */
+.reports-empty-state {
+    text-align: center;
+    padding: 100px 20px;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.reports-empty-state i {
+    font-size: 4rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.reports-empty-state h3 {
+    margin-bottom: 0.5rem;
+}
+
+.reports-error-state {
+    border-color: var(--warning-color, #f59e0b);
+}
+
+.reports-error-state i {
+    color: var(--warning-color, #f59e0b) !important;
+    opacity: 0.8;
+}
+
+.error-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+.error-hint code {
+    background: var(--bg-secondary);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.loader-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.reports-loading {
+    text-align: center;
+    padding: 100px;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Looker tip compact */
+.looker-tip {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-left: auto;
+    /* Jogar para a direita */
+}
+
+.looker-tip p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    max-width: 250px;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.looker-tip i {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .client-reports-viewer {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .reports-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .iframe-wrapper {
+        min-height: 600px;
+    }
+
+    .report-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .report-header-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

@@ -48,6 +48,7 @@ export const ROUTES = {
 
     // Client routes
     CLIENT_DASHBOARD: '/client/dashboard',
+    CLIENT_REPORTS: '/client/reports',
     CLIENT_POST: '/client/post/:id',
 
     // Admin routes

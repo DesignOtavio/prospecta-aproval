@@ -30,6 +30,16 @@ const Sidebar = () => {
                     Dashboard
                 </Link>
 
+                {!isAdmin && (
+                    <Link
+                        to={ROUTES.CLIENT_REPORTS}
+                        className={`sidebar__link ${isActive(ROUTES.CLIENT_REPORTS) ? 'active' : ''}`}
+                    >
+                        <i className="ph ph-chart-bar icon"></i>
+                        Relatórios
+                    </Link>
+                )}
+
                 {isAdmin && (
                     <Link
                         to={ROUTES.ADMIN_POSTS || '#'}

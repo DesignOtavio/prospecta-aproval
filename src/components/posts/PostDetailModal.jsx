@@ -152,6 +152,23 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
         .filter(c => c.markers && c.markers[0]?.mediaIndex === currentMediaIndex)
         .map(c => ({ ...c.markers[0], id: c.id, author: c.prpsct_profiles?.full_name }));
 
+    const getCommentMarkerInfo = (comment) => {
+        if (!comment.markers || !comment.markers.length) return null;
+        const marker = comment.markers[0];
+
+        // Find markers on the same media
+        const relevantComments = comments.filter(c =>
+            c.markers && c.markers.length > 0 && c.markers[0].mediaIndex === marker.mediaIndex
+        );
+
+        const index = relevantComments.findIndex(c => c.id === comment.id);
+
+        return {
+            mediaIndex: marker.mediaIndex,
+            markerNumber: index + 1
+        };
+    };
+
     return (
         <div className="post-detail-modal">
             <div className="post-detail-container">
@@ -328,7 +345,21 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
                                 </div>
                                 <div className="comment-content">
                                     <div className="comment-header">
-                                        <span className="comment-author">{comment.prpsct_profiles?.full_name}</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                            {(() => {
+                                                const info = getCommentMarkerInfo(comment);
+                                                if (info) return (
+                                                    <span
+                                                        className="comment-img-badge"
+                                                        onClick={() => setCurrentMediaIndex(info.mediaIndex)}
+                                                        title={`Ir para imagem ${info.mediaIndex + 1}`}
+                                                    >
+                                                        IMG {info.mediaIndex + 1} • <span className="badge-num">#{info.markerNumber}</span>
+                                                    </span>
+                                                );
+                                            })()}
+                                            <span className="comment-author">{comment.prpsct_profiles?.full_name}</span>
+                                        </div>
                                         <span className="comment-time">{formatRelativeTime(comment.created_at)}</span>
                                     </div>
                                     <div className="comment-text">{comment.content}</div>

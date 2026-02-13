@@ -9,6 +9,7 @@ import Register from './pages/auth/Register';
 
 // Client pages
 import ClientDashboard from './pages/client/Dashboard';
+import Reports from './pages/client/Reports';
 import PostView from './pages/client/PostView';
 
 // Admin pages
@@ -32,6 +33,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ClientDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.CLIENT_REPORTS}
+            element={
+              <ProtectedRoute>
+                <Reports />
               </ProtectedRoute>
             }
           />

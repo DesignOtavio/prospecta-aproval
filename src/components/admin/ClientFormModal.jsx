@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createClientWithAuth } from '../../services/clients.service';
+import { createClient } from '../../services/clients.service';
 import Input from '../common/Input';
 import Button from '../common/Button';
 
@@ -22,8 +22,9 @@ const ClientFormModal = ({ onClose, onSuccess }) => {
 
         try {
             const { name, email, company_name, password } = formData;
-            const { error } = await createClientWithAuth({ name, email, company_name }, password);
-            if (error) throw error;
+            const result = await createClient({ name, email, company_name }, password);
+            if (result.error) throw result.error;
+
             onSuccess?.();
             onClose();
         } catch (error) {

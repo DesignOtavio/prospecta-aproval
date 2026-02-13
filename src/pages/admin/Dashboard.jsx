@@ -15,6 +15,7 @@ import Modal from '../../components/common/Modal';
 import AdminPostCreate from '../../components/admin/AdminPostCreate';
 import ClientFormModal from '../../components/admin/ClientFormModal';
 import PostDetailModal from '../../components/posts/PostDetailModal';
+import AdminReportModal from '../../components/admin/AdminReportModal';
 
 const AdminDashboard = () => {
     const [posts, setPosts] = useState([]);
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isClientModalOpen, setIsClientModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
+    const [selectedClientForReports, setSelectedClientForReports] = useState(null);
 
     const navigate = useNavigate();
 
@@ -259,6 +261,14 @@ const AdminDashboard = () => {
                                         <td>
                                             <div className="table-actions" style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                                                 <button
+                                                    className="action-icon-btn reports"
+                                                    onClick={() => setSelectedClientForReports(client)}
+                                                    title="Gerenciar Relatórios"
+                                                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#3b82f6' }}
+                                                >
+                                                    <i className="ph ph-chart-bar icon" style={{ fontSize: '1.2rem' }}></i>
+                                                </button>
+                                                <button
                                                     className="action-icon-btn share"
                                                     onClick={() => handleShareClient(client)}
                                                     title="Compartilhar Link"
@@ -319,6 +329,19 @@ const AdminDashboard = () => {
                     post={selectedPost}
                     onClose={() => setSelectedPost(null)}
                     onUpdate={loadData}
+                />
+            </Modal>
+
+            {/* Reports Management Modal */}
+            <Modal
+                isOpen={!!selectedClientForReports}
+                onClose={() => setSelectedClientForReports(null)}
+                title="Gerenciar Relatórios Looker"
+                size="md"
+            >
+                <AdminReportModal
+                    client={selectedClientForReports}
+                    onClose={() => setSelectedClientForReports(null)}
                 />
             </Modal>
         </Layout>

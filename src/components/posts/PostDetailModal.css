@@ -393,3 +393,30 @@
 .action-icon-btn.delete:hover {
     background-color: #fee2e2;
 }
+
+/* Comment Image Badge */
+.comment-img-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    background: var(--color-surface-50);
+    border: 1px solid var(--color-gray-medium);
+    color: var(--color-gray-dark);
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.comment-img-badge:hover {
+    background: var(--color-blue-primary);
+    color: white;
+    border-color: var(--color-blue-primary);
+}
+
+.badge-num {
+    font-weight: 800;
+}
