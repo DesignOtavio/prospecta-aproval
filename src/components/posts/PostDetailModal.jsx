@@ -7,7 +7,9 @@ import {
     updatePost,
     deletePost
 } from '../../services/posts.service';
+import { uploadFile } from '../../services/storage.service';
 import { formatRelativeTime } from '../../utils/helpers';
+import { POST_STATUS, MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '../../utils/constants';
 import Button from '../common/Button';
 import Input from '../common/Input';
 import Badge from '../common/Badge';
@@ -26,6 +28,10 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
     const [editedDescription, setEditedDescription] = useState(post?.description || '');
     const [editedTextContent, setEditedTextContent] = useState(post?.text_content || '');
 
+    // Design upload state
+    const [designFiles, setDesignFiles] = useState([]);
+    const [isUploadingDesign, setIsUploadingDesign] = useState(false);
+
     useEffect(() => {
         if (post?.id) {
             loadComments();
@@ -41,9 +47,13 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
 
     const handleAction = async (action) => {
         let confirmMsg = 'Confirmar ação?';
-        if (action === 'approved') confirmMsg = 'Aprovar esta postagem?';
-        else if (action === 'changes_requested') confirmMsg = 'Solicitar alterações nesta postagem?';
-        else if (action === 'pending') confirmMsg = 'Mover postagem de volta para Pendente?';
+        if (action === 'approved') {
+            confirmMsg = mediaList.length === 0 ? 'Aprovar o texto desta postagem?' : 'Aprovar esta postagem?';
+        } else if (action === 'changes_requested') {
+            confirmMsg = 'Solicitar alterações nesta postagem?';
+        } else if (action === 'pending') {
+            confirmMsg = 'Mover postagem de volta para Pendente?';
+        }
 
         if (!confirm(confirmMsg)) return;
 
@@ -57,6 +67,63 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
             alert('Erro ao processar ação: ' + (error.message || 'Erro desconhecido'));
         }
         setActionLoading(false);
+    };
+
+    const handleSubmitDesign = async () => {
+        if (designFiles.length === 0) return alert('Selecione pelo menos um arquivo');
+
+        setLoading(true);
+        setIsUploadingDesign(true);
+
+        try {
+            const uploadedMedia = [...(post.media_urls || [])];
+            for (const fileObj of designFiles) {
+                const { data, error } = await uploadFile(fileObj.file);
+                if (error) throw error;
+                uploadedMedia.push({
+                    type: fileObj.type,
+                    url: data.url,
+                    filename: data.name
+                });
+            }
+
+            const { error: updateError } = await updatePost(post.id, {
+                media_urls: uploadedMedia,
+                status: POST_STATUS.PENDING
+            }, user.id);
+
+            if (updateError) throw updateError;
+
+            onUpdate?.();
+            onClose();
+        } catch (error) {
+            console.error(error);
+            alert('Erro ao enviar design');
+        } finally {
+            setLoading(false);
+            setIsUploadingDesign(false);
+        }
+    };
+
+    const handleDesignFileChange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const newFiles = Array.from(e.target.files).map(file => ({
+                file,
+                id: Math.random().toString(36).substr(2, 9),
+                preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+                type: file.type.startsWith('image/') ? 'image' : 'video'
+            }));
+            setDesignFiles(prev => [...prev, ...newFiles]);
+        }
+    };
+
+    const removeDesignFile = (index) => {
+        setDesignFiles(prev => {
+            const updatedFiles = [...prev];
+            if (updatedFiles[index].preview) URL.revokeObjectURL(updatedFiles[index].preview);
+            updatedFiles.splice(index, 1);
+            return updatedFiles;
+        });
     };
 
     const handleDelete = async () => {
@@ -174,65 +241,74 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
             <div className="post-detail-container">
                 {/* Left: Content */}
                 <div className="post-detail-content">
-                    <div className="post-detail-media" style={{ cursor: 'crosshair' }}>
-                        {hasMultipleMedia && (
+                    <div className="post-detail-media" style={{ cursor: mediaList.length > 0 ? 'crosshair' : 'default' }}>
+                        {mediaList.length > 0 ? (
                             <>
-                                <button className="media-nav-btn prev" onClick={handlePrevMedia}>
-                                    <i className="ph ph-caret-left"></i>
-                                </button>
-                                <button className="media-nav-btn next" onClick={handleNextMedia}>
-                                    <i className="ph ph-caret-right"></i>
-                                </button>
-                                <div className="media-counter">
-                                    {currentMediaIndex + 1} / {mediaList.length}
-                                </div>
-                            </>
-                        )}
+                                {hasMultipleMedia && (
+                                    <>
+                                        <button className="media-nav-btn prev" onClick={handlePrevMedia}>
+                                            <i className="ph ph-caret-left"></i>
+                                        </button>
+                                        <button className="media-nav-btn next" onClick={handleNextMedia}>
+                                            <i className="ph ph-caret-right"></i>
+                                        </button>
+                                        <div className="media-counter">
+                                            {currentMediaIndex + 1} / {mediaList.length}
+                                        </div>
+                                    </>
+                                )}
 
-                        {currentMedia.type === 'video' ? (
-                            <video src={currentMedia.url} controls className="media-content" />
-                        ) : (
-                            <div className="media-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
-                                <img
-                                    src={currentMedia.url || '/placeholder.png'}
-                                    alt={post.title}
-                                    className="media-content"
-                                    onClick={handleImageClick}
-                                />
+                                {currentMedia.type === 'video' ? (
+                                    <video src={currentMedia.url} controls className="media-content" />
+                                ) : (
+                                    <div className="media-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+                                        <img
+                                            src={currentMedia.url || '/placeholder.png'}
+                                            alt={post.title}
+                                            className="media-content"
+                                            onClick={handleImageClick}
+                                        />
 
-                                {/* Render Saved Markers */}
-                                {currentMarkers.map((marker, idx) => (
-                                    <div
-                                        key={marker.id}
-                                        className="image-marker saved"
-                                        style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
-                                        title={marker.author}
-                                    >
-                                        {idx + 1}
-                                    </div>
-                                ))}
+                                        {/* Render Saved Markers */}
+                                        {currentMarkers.map((marker, idx) => (
+                                            <div
+                                                key={marker.id}
+                                                className="image-marker saved"
+                                                style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
+                                                title={marker.author}
+                                            >
+                                                {idx + 1}
+                                            </div>
+                                        ))}
 
-                                {/* Render Temp Marker */}
-                                {tempMarker && tempMarker.mediaIndex === currentMediaIndex && (
-                                    <div
-                                        className="image-marker temp"
-                                        style={{ left: `${tempMarker.x}%`, top: `${tempMarker.y}%` }}
-                                    >
-                                        <i className="ph ph-push-pin-simple"></i>
+                                        {/* Render Temp Marker */}
+                                        {tempMarker && tempMarker.mediaIndex === currentMediaIndex && (
+                                            <div
+                                                className="image-marker temp"
+                                                style={{ left: `${tempMarker.x}%`, top: `${tempMarker.y}%` }}
+                                            >
+                                                <i className="ph ph-push-pin-simple"></i>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
+                            </>
+                        ) : (
+                            <div className="media-placeholder-empty">
+                                <div className="placeholder-icon">📝</div>
+                                <p>Aprovação de Texto</p>
+                                <span>Esta postagem ainda não possui mídia vinculada.</span>
                             </div>
                         )}
                     </div>
-
                     <div className="post-metadata">
                         <div className="metadata-item">
                             <label>Status</label>
-                            <Badge status={post.status} />
+                            <Badge status={post.status} mediaUrls={post.media_urls} />
                         </div>
                         <div className="metadata-item">
                             <label>Cliente</label>
-                            <span>{post.clients?.name}</span>
+                            <span>{post.prpsct_clients?.name || post.clients?.name}</span>
                         </div>
                         <div className="metadata-item">
                             <label>Criado em</label>
@@ -292,6 +368,49 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
                                 <h3>Legenda / Copy</h3>
                                 <p>{post.text_content || 'Sem texto definido.'}</p>
                             </div>
+
+                            {isAdmin && post.status === POST_STATUS.APPROVED && mediaList.length === 0 && (
+                                <div className="admin-design-upload mt-6 p-4 border rounded bg-gray-50">
+                                    <h3 className="font-bold mb-2">Adicionar Design para Aprovação</h3>
+                                    <p className="text-sm text-gray-600 mb-4">O texto foi aprovado. Agora, envie as artes para aprovação de design.</p>
+
+                                    <div className="design-upload-zone">
+                                        <input
+                                            type="file"
+                                            id="design-upload"
+                                            multiple
+                                            onChange={handleDesignFileChange}
+                                            style={{ display: 'none' }}
+                                        />
+                                        <label htmlFor="design-upload" className="design-upload-label">
+                                            <i className="ph ph-plus"></i> Adicionar Arquivos
+                                        </label>
+                                    </div>
+
+                                    {designFiles.length > 0 && (
+                                        <div className="design-previews mt-4">
+                                            {designFiles.map((f, i) => (
+                                                <div key={f.id} className="design-preview-item">
+                                                    {f.type === 'image' ? (
+                                                        <img src={f.preview} alt="" />
+                                                    ) : (
+                                                        <div className="video-thumb">🎬</div>
+                                                    )}
+                                                    <button onClick={() => removeDesignFile(i)}>×</button>
+                                                </div>
+                                            ))}
+                                            <Button
+                                                className="mt-4"
+                                                fullWidth
+                                                onClick={handleSubmitDesign}
+                                                loading={isUploadingDesign}
+                                            >
+                                                Enviar para Aprovação de Design
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </>
                     )}
                 </div>
@@ -413,15 +532,16 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
                                 fullWidth
                                 onClick={() => handleAction('approved')}
                                 loading={actionLoading}
-                                disabled={post.status === 'approved'}
+                                disabled={post.status === POST_STATUS.APPROVED}
                             >
-                                <i className="ph ph-check-circle mr-2"></i> Aprovar Postagem
+                                <i className="ph ph-check-circle mr-2"></i>
+                                {mediaList.length === 0 ? 'Aprovar Texto' : 'Aprovar Postagem'}
                             </Button>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

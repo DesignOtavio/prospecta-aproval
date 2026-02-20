@@ -27,6 +27,12 @@ const AdminDashboard = () => {
     const [selectedPost, setSelectedPost] = useState(null);
     const [selectedClientForReports, setSelectedClientForReports] = useState(null);
 
+    // Filter states
+    const [searchQuery, setSearchQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [clientFilter, setClientFilter] = useState('all');
+    const [showAllPosts, setShowAllPosts] = useState(false);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -79,6 +85,18 @@ const AdminDashboard = () => {
         pendingPosts: posts.filter((p) => p.status === 'pending').length,
         approvedPosts: posts.filter((p) => p.status === 'approved').length,
     };
+
+    const filteredPosts = posts.filter(post => {
+        const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.description?.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesStatus = statusFilter === 'all' || post.status === statusFilter;
+        const matchesClient = clientFilter === 'all' || post.client_id === clientFilter;
+
+        return matchesSearch && matchesStatus && matchesClient;
+    });
+
+    const isAnyFilterActive = searchQuery !== '' || statusFilter !== 'all' || clientFilter !== 'all';
+    const displayPosts = isAnyFilterActive || showAllPosts ? filteredPosts : filteredPosts.slice(0, 8);
 
     if (loading) {
         return (
@@ -143,19 +161,76 @@ const AdminDashboard = () => {
                     </div>
                 </div>
 
-                {/* Recent Posts - Thumbnail View */}
-                <div className="section-header mt-8 mb-4">
-                    <h2 className="text-xl font-bold">Postagens Recentes</h2>
-                    <Button variant="ghost" size="sm" onClick={() => navigate(ROUTES.ADMIN_POSTS)}>
-                        Ver todas →
-                    </Button>
+                {/* Filter Bar */}
+                <div className="filter-bar mt-6">
+                    <div className="filter-group">
+                        <div className="search-box">
+                            <i className="ph ph-magnifying-glass"></i>
+                            <input
+                                type="text"
+                                placeholder="Buscar postagem..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="filter-group">
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="filter-select"
+                        >
+                            <option value="all">Todos os Status</option>
+                            <option value="pending">Pendente</option>
+                            <option value="approved">Aprovada</option>
+                            <option value="changes_requested">Em Alteração</option>
+                        </select>
+                        <select
+                            value={clientFilter}
+                            onChange={(e) => setClientFilter(e.target.value)}
+                            className="filter-select"
+                        >
+                            <option value="all">Todos os Clientes</option>
+                            {clients.map(client => (
+                                <option key={client.id} value={client.id}>{client.name}</option>
+                            ))}
+                        </select>
+                        {(searchQuery || statusFilter !== 'all' || clientFilter !== 'all') && (
+                            <button
+                                className="clear-filters"
+                                onClick={() => {
+                                    setSearchQuery('');
+                                    setStatusFilter('all');
+                                    clientFilter !== 'all' && setClientFilter('all');
+                                }}
+                            >
+                                Limpar
+                            </button>
+                        )}
+                    </div>
                 </div>
 
-                {posts.length === 0 ? (
-                    <Card padding="md"><p className="text-gray-500">Nenhuma postagem recente.</p></Card>
+                {/* Recent/Filtered Posts - Thumbnail View */}
+                <div className="section-header mt-8 mb-4">
+                    <h2 className="text-xl font-bold">
+                        {isAnyFilterActive ? 'Resultados da Busca' : (showAllPosts ? 'Todas as Postagens' : 'Postagens Recentes')}
+                    </h2>
+                    {!isAnyFilterActive && (
+                        <Button variant="ghost" size="sm" onClick={() => setShowAllPosts(!showAllPosts)}>
+                            {showAllPosts ? 'Mostrar recentes' : 'Ver todas'} →
+                        </Button>
+                    )}
+                </div>
+
+                {displayPosts.length === 0 ? (
+                    <Card padding="md">
+                        <p className="text-gray-500">
+                            {isAnyFilterActive ? 'Nenhuma postagem encontrada para os filtros aplicados.' : 'Nenhuma postagem recente.'}
+                        </p>
+                    </Card>
                 ) : (
                     <div className="posts-grid-compact">
-                        {posts.slice(0, 8).map((post) => (
+                        {displayPosts.map((post) => (
                             <div
                                 key={post.id}
                                 className="post-thumb-card"
@@ -169,12 +244,14 @@ const AdminDashboard = () => {
                                             <div className="thumb-video-placeholder">🎬</div>
                                         )
                                     ) : (
-                                        <div className="thumb-placeholder">Sem Mídia</div>
+                                        <div className="thumb-placeholder"></div>
                                     )}
                                     <div className="thumb-status">
-                                        {post.status === 'pending' && <span className="status-dot pending" title="Pendente"></span>}
-                                        {post.status === 'approved' && <span className="status-dot approved" title="Aprovada"></span>}
-                                        {post.status === 'changes_requested' && <span className="status-dot changes" title="Alteração"></span>}
+                                        <Badge
+                                            status={post.status}
+                                            mediaUrls={post.media_urls}
+                                            className="status-badge-mini"
+                                        />
                                     </div>
                                 </div>
                                 <div className="thumb-info">

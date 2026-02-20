@@ -4,7 +4,7 @@ import { fetchClients } from '../../services/clients.service';
 import { uploadFile } from '../../services/storage.service';
 import { createPost } from '../../services/posts.service';
 import { supabase } from '../../services/supabase';
-import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE } from '../../utils/constants';
+import { MAX_IMAGE_SIZE, MAX_VIDEO_SIZE, POST_STATUS } from '../../utils/constants';
 import Input from '../common/Input';
 import Button from '../common/Button';
 import './AdminPostCreate.css';
@@ -19,7 +19,8 @@ const AdminPostCreate = ({ onClose, onSuccess }) => {
         title: '',
         client_id: '',
         description: '',
-        text_content: ''
+        text_content: '',
+        post_type: 'complete' // 'complete' or 'text_only'
     });
 
     const [files, setFiles] = useState([]);
@@ -146,7 +147,12 @@ const AdminPostCreate = ({ onClose, onSuccess }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.client_id) return alert('Selecione um cliente');
-        if (files.length === 0) return alert('Adicione pelo menos uma imagem ou vídeo');
+        if (formData.post_type === 'complete' && files.length === 0) {
+            return alert('Adicione pelo menos uma imagem ou vídeo para uma postagem completa');
+        }
+        if (formData.post_type === 'text_only' && !formData.text_content.trim()) {
+            return alert('Digite o texto da postagem para aprovação');
+        }
 
         setLoading(true);
         setUploading(true);
@@ -171,7 +177,7 @@ const AdminPostCreate = ({ onClose, onSuccess }) => {
                 text_content: formData.text_content,
                 client_id: formData.client_id,
                 media_urls: uploadedMedia,
-                status: 'pending',
+                status: POST_STATUS.PENDING,
                 created_by: user.id
             };
 
@@ -196,6 +202,28 @@ const AdminPostCreate = ({ onClose, onSuccess }) => {
 
     return (
         <form onSubmit={handleSubmit} className="post-form">
+            <div className="form-group">
+                <label className="input-label">Tipo de Postagem</label>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                    <Button
+                        type="button"
+                        variant={formData.post_type === 'complete' ? 'primary' : 'outline'}
+                        onClick={() => setFormData({ ...formData, post_type: 'complete' })}
+                        fullWidth
+                    >
+                        Design + Texto
+                    </Button>
+                    <Button
+                        type="button"
+                        variant={formData.post_type === 'text_only' ? 'primary' : 'outline'}
+                        onClick={() => setFormData({ ...formData, post_type: 'text_only' })}
+                        fullWidth
+                    >
+                        Apenas Texto
+                    </Button>
+                </div>
+            </div>
+
             <div className="form-group">
                 <label className="input-label">Cliente</label>
                 <select
@@ -222,27 +250,29 @@ const AdminPostCreate = ({ onClose, onSuccess }) => {
                 fullWidth
             />
 
-            <div
-                className={`drop-zone ${dragActive ? 'drag-active' : ''}`}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-            >
-                <input
-                    type="file"
-                    id="file-upload"
-                    multiple
-                    accept="image/*,video/*"
-                    onChange={handleFileChange}
-                    style={{ display: 'none' }}
-                />
-                <label htmlFor="file-upload" className="drop-zone-label">
-                    <div className="upload-icon">☁️</div>
-                    <p>Arraste arquivos ou clique para fazer upload</p>
-                    <span className="upload-hint">Imagens e Vídeos suportados</span>
-                </label>
-            </div>
+            {formData.post_type === 'complete' && (
+                <div
+                    className={`drop-zone ${dragActive ? 'drag-active' : ''}`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                >
+                    <input
+                        type="file"
+                        id="file-upload"
+                        multiple
+                        accept="image/*,video/*"
+                        onChange={handleFileChange}
+                        style={{ display: 'none' }}
+                    />
+                    <label htmlFor="file-upload" className="drop-zone-label">
+                        <div className="upload-icon">☁️</div>
+                        <p>Arraste arquivos ou clique para fazer upload</p>
+                        <span className="upload-hint">Imagens e Vídeos suportados</span>
+                    </label>
+                </div>
+            )}
 
             {files.length > 0 && (
                 <div className="files-grid">

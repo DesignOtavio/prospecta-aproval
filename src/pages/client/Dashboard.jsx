@@ -22,6 +22,7 @@ const ClientDashboard = () => {
     // New state for modal
     const [selectedPost, setSelectedPost] = useState(null);
     const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const { user, loading: authLoading } = useAuth();
     const navigate = useNavigate();
@@ -193,8 +194,11 @@ const ClientDashboard = () => {
     };
 
     const filteredPosts = posts.filter((post) => {
-        if (filter === 'all') return true;
-        return post.status === filter;
+        const matchesStatus = filter === 'all' || post.status === filter;
+        const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.text_content?.toLowerCase().includes(searchQuery.toLowerCase());
+
+        return matchesStatus && matchesSearch;
     });
 
     const stats = {
@@ -290,94 +294,192 @@ const ClientDashboard = () => {
                         <i className="ph ph-list-bullets mr-2"></i> Todas
                     </button>
 
+                    <div className="tab-search" style={{ marginLeft: 'auto' }}>
+                        <div className="search-box">
+                            <i className="ph ph-magnifying-glass"></i>
+                            <input
+                                type="text"
+                                placeholder="Buscar postagem..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{
+                                    paddingLeft: '2.5rem',
+                                    paddingRight: '1rem',
+                                    paddingTop: '0.5rem',
+                                    paddingBottom: '0.5rem',
+                                    borderRadius: '8px',
+                                    border: '1px solid #e2e8f0',
+                                    fontSize: '0.875rem'
+                                }}
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                {/* Posts Grid - New Style */}
-                <div className="posts-grid-modern">
-                    {filteredPosts.length === 0 ? (
-                        <div className="empty-state-modern">
-                            <p>Nenhuma postagem encontrada nesta categoria.</p>
+                {/* Posts Grid - Separated by Media vs Text */}
+                <div className="posts-sections">
+                    {/* Media Posts Section */}
+                    <div className="posts-section mb-12" style={{ marginBottom: '40px' }}>
+                        <div className="section-header mb-6" style={{ marginBottom: '20px', borderBottom: '1px solid #edf2f7', paddingBottom: '10px' }}>
+                            <h2 className="text-xl font-bold flex items-center gap-2" style={{ fontSize: '1.25rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', color: '#1a365d' }}>
+                                <i className="ph ph-image-square" style={{ color: '#2563eb' }}></i>
+                                Postagens com Mídia
+                            </h2>
+                            <p className="text-sm text-gray-500" style={{ fontSize: '0.875rem', color: '#718096' }}>Artes e vídeos para aprovação visual</p>
                         </div>
-                    ) : (
-                        filteredPosts.map((post) => (
-                            <div key={post.id} className="post-card-modern">
-                                <div className="card-media-preview">
-                                    <div className="status-badge-modern">
-                                        {post.status === 'pending' && <><i className="ph ph-clock"></i> Pendente</>}
-                                        {post.status === 'approved' && <><i className="ph ph-check-circle"></i> Aprovada</>}
-                                        {post.status === 'changes_requested' && <><i className="ph ph-warning-circle"></i> Em Alteração</>}
-                                    </div>
+                        <div className="posts-grid-modern">
+                            {filteredPosts.filter(p => p.media_urls && p.media_urls.length > 0).length === 0 ? (
+                                <div className="empty-state-mini" style={{ padding: '20px', color: '#a0aec0', textAlign: 'center' }}>
+                                    Nenhuma postagem com mídia nesta categoria.
+                                </div>
+                            ) : (
+                                filteredPosts
+                                    .filter(p => p.media_urls && p.media_urls.length > 0)
+                                    .map((post) => (
+                                        <div key={post.id} className="post-card-modern">
+                                            <div className="card-media-preview">
+                                                <div className="status-badge-modern">
+                                                    {post.status === 'pending' && <><i className="ph ph-clock"></i> Pendente</>}
+                                                    {post.status === 'approved' && <><i className="ph ph-check-circle"></i> Aprovada</>}
+                                                    {post.status === 'changes_requested' && <><i className="ph ph-warning-circle"></i> Em Alteração</>}
+                                                </div>
 
-                                    {post.media_urls && post.media_urls.length > 0 ? (
-                                        post.media_urls[0].type === 'image' ? (
-                                            <img src={post.media_urls[0].url} alt={post.title} className="media-img" />
-                                        ) : (
-                                            <div className="media-video-placeholder">
-                                                <span>🎬 Vídeo</span>
+                                                {post.media_urls && post.media_urls.length > 0 ? (
+                                                    post.media_urls[0].type === 'image' ? (
+                                                        <img src={post.media_urls[0].url} alt={post.title} className="media-img" />
+                                                    ) : (
+                                                        <div className="media-video-placeholder">
+                                                            <span>🎬 Vídeo</span>
+                                                        </div>
+                                                    )
+                                                ) : (
+                                                    <div className="media-placeholder"></div>
+                                                )}
+
+                                                {post.media_urls && post.media_urls.length > 0 && (
+                                                    <div className="media-type-badge">
+                                                        {post.media_urls[0].type === 'image' ? <><i className="ph ph-image"></i> Imagem</> : <><i className="ph ph-video-camera"></i> Vídeo</>}
+                                                    </div>
+                                                )}
                                             </div>
-                                        )
-                                    ) : (
-                                        <div className="media-placeholder">Sem Mídia</div>
-                                    )}
 
-                                    <div className="media-type-badge">
-                                        {post.media_urls?.[0]?.type === 'image' ? <><i className="ph ph-image"></i> Imagem</> : <><i className="ph ph-video-camera"></i> Vídeo</>}
-                                    </div>
-                                </div>
+                                            <div className="card-content">
+                                                <h3 className="card-title">{post.title}</h3>
+                                                <p className="card-desc">
+                                                    {post.text_content ? truncateText(post.text_content, 100) : post.description}
+                                                </p>
 
-                                <div className="card-content">
-                                    <h3 className="card-title">{post.title}</h3>
-                                    <p className="card-desc">
-                                        {post.text_content ? truncateText(post.text_content, 100) : post.description}
-                                    </p>
+                                                <div className="card-meta">
+                                                    <div className="meta-item">
+                                                        <span><i className="ph ph-user"></i> {client?.name}</span>
+                                                    </div>
+                                                    <div className="meta-item">
+                                                        <span><i className="ph ph-calendar-blank"></i> {new Date(post.created_at).toLocaleDateString()}</span>
+                                                    </div>
+                                                    <div className="meta-item">
+                                                        <span><i className="ph ph-chat-text"></i> {post.comments_count || 0}</span>
+                                                    </div>
+                                                </div>
 
-                                    <div className="card-meta">
-                                        <div className="meta-item">
-                                            <span><i className="ph ph-user"></i> {client?.name}</span>
+                                                <div className="card-actions">
+                                                    <button
+                                                        className="action-btn btn-approve"
+                                                        onClick={() => setSelectedPost(post)}
+                                                    >
+                                                        <i className="ph ph-check"></i> Aprovar
+                                                    </button>
+                                                    <button
+                                                        className="action-btn btn-changes"
+                                                        onClick={() => setSelectedPost(post)}
+                                                    >
+                                                        <i className="ph ph-pencil-simple-line"></i> Alteração
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="meta-item">
-                                            <span><i className="ph ph-calendar-blank"></i> {new Date(post.created_at).toLocaleDateString()}</span>
-                                        </div>
-                                        <div className="meta-item">
-                                            <span><i className="ph ph-chat-text"></i> {post.comments_count || 0}</span>
-                                        </div>
-                                    </div>
+                                    ))
+                            )}
+                        </div>
+                    </div>
 
-                                    <div className="card-actions">
-                                        <button
-                                            className="action-btn btn-approve"
-                                            onClick={() => setSelectedPost(post)}
-                                        >
-                                            <i className="ph ph-check"></i> Aprovar
-                                        </button>
-                                        <button
-                                            className="action-btn btn-changes"
-                                            onClick={() => setSelectedPost(post)}
-                                        >
-                                            <i className="ph ph-pencil-simple-line"></i> Alteração
-                                        </button>
-                                    </div>
-                                </div>
+                    {/* Text Only Posts Section */}
+                    {filteredPosts.filter(p => !p.media_urls || p.media_urls.length === 0).length > 0 && (
+                        <div className="posts-section">
+                            <div className="section-header mb-6" style={{ marginBottom: '20px', borderBottom: '1px solid #edf2f7', paddingBottom: '10px' }}>
+                                <h2 className="text-xl font-bold flex items-center gap-2" style={{ fontSize: '1.25rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px', color: '#1a365d' }}>
+                                    <i className="ph ph-text-aa" style={{ color: '#2563eb' }}></i>
+                                    Aprovações de Texto
+                                </h2>
+                                <p className="text-sm text-gray-500" style={{ fontSize: '0.875rem', color: '#718096' }}>Legendas e copies aguardando revisão</p>
                             </div>
-                        ))
+                            <div className="posts-grid-modern">
+                                {filteredPosts
+                                    .filter(p => !p.media_urls || p.media_urls.length === 0)
+                                    .map((post) => (
+                                        <div key={post.id} className="post-card-modern">
+                                            <div className="card-media-preview text-only" style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+                                                <div className="status-badge-modern">
+                                                    {post.status === 'pending' && <><i className="ph ph-clock"></i> Pendente</>}
+                                                    {post.status === 'approved' && <><i className="ph ph-check-circle"></i> Aprovada</>}
+                                                    {post.status === 'changes_requested' && <><i className="ph ph-warning-circle"></i> Em Alteração</>}
+                                                </div>
+                                                <div className="media-placeholder-text">
+                                                    <i className="ph ph-article" style={{ fontSize: '3rem', color: '#cbd5e0' }}></i>
+                                                </div>
+                                            </div>
+
+                                            <div className="card-content">
+                                                <h3 className="card-title">{post.title}</h3>
+                                                <p className="card-desc" style={{ fontSize: '0.875rem', color: '#4a5568', margin: '12px 0' }}>
+                                                    {post.text_content ? truncateText(post.text_content, 120) : post.description}
+                                                </p>
+
+                                                <div className="card-meta" style={{ display: 'flex', gap: '12px', fontSize: '0.75rem', color: '#718096' }}>
+                                                    <div className="meta-item">
+                                                        <span><i className="ph ph-calendar-blank"></i> {new Date(post.created_at).toLocaleDateString()}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="card-actions" style={{ marginTop: '16px' }}>
+                                                    <button
+                                                        className="action-btn btn-approve"
+                                                        onClick={() => setSelectedPost(post)}
+                                                        style={{ width: '100%', padding: '8px', borderRadius: '6px', background: '#2563eb', color: 'white', border: 'none', cursor: 'pointer' }}
+                                                    >
+                                                        <i className="ph ph-eye"></i> Visualizar & Aprovar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        </div>
                     )}
+
+                    {filteredPosts.length === 0 && (
+                        <div className="empty-state-modern" style={{ textAlign: 'center', padding: '60px 20px', background: '#f8fafc', borderRadius: '12px', border: '2px dashed #e2e8f0' }}>
+                            <i className="ph ph-folders" style={{ fontSize: '3rem', color: '#cbd5e0', marginBottom: '16px' }}></i>
+                            <p style={{ color: '#64748b', fontWeight: '500' }}>Nenhuma postagem encontrada nesta categoria.</p>
+                        </div>
+                    )}
+
+                    {/* Post Detail Modal - ClickUp Style */}
+                    <Modal
+                        isOpen={!!selectedPost}
+                        onClose={() => setSelectedPost(null)}
+                        title={selectedPost?.title || 'Detalhes da Postagem'}
+                        size="xl"
+                        className="post-detail-modal-wrapper"
+                    >
+                        <PostDetailModal
+                            post={selectedPost}
+                            onClose={() => setSelectedPost(null)}
+                            onUpdate={handlePostUpdate}
+                        />
+                    </Modal>
                 </div>
             </div>
-
-            {/* Post Detail Modal - ClickUp Style */}
-            <Modal
-                isOpen={!!selectedPost}
-                onClose={() => setSelectedPost(null)}
-                title={selectedPost?.title || 'Detalhes da Postagem'}
-                size="xl"
-                className="post-detail-modal-wrapper"
-            >
-                <PostDetailModal
-                    post={selectedPost}
-                    onClose={() => setSelectedPost(null)}
-                    onUpdate={handlePostUpdate}
-                />
-            </Modal>
         </Layout>
     );
 };

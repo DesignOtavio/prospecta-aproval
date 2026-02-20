@@ -420,3 +420,111 @@
 .badge-num {
     font-weight: 800;
 }
+
+/* New Multi-stage Styles */
+.media-placeholder-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-10);
+    color: white;
+    text-align: center;
+    min-height: 400px;
+}
+
+.placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-4);
+}
+
+.media-placeholder-empty p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-2);
+}
+
+.media-placeholder-empty span {
+    font-size: var(--font-size-sm);
+    opacity: 0.7;
+}
+
+.admin-design-upload {
+    margin-top: var(--spacing-8);
+    background: var(--color-surface-50);
+    border: 2px dashed var(--color-gray-light);
+    border-radius: var(--radius-lg);
+}
+
+.design-upload-zone {
+    margin-bottom: var(--spacing-4);
+}
+
+.design-upload-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: var(--spacing-4);
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.design-upload-label:hover {
+    border-color: var(--color-blue-primary);
+    color: var(--color-blue-primary);
+}
+
+.design-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+}
+
+.design-preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-black);
+}
+
+.design-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.design-preview-item .video-thumb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.design-preview-item button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.design-preview-item button:hover {
+    background: rgba(255, 0, 0, 0.8);
+}

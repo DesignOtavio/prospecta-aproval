@@ -445,4 +445,25 @@
         width: 100%;
         justify-content: flex-end;
     }
+
+    /* Esconder elementos menos importantes no mobile */
+    .reports-sidebar h3 {
+        display: none;
+    }
+
+    .looker-tip p {
+        display: none;
+    }
+
+    .looker-tip i {
+        font-size: 1.25rem;
+        /* Aumentar ícone já que texto sumiu */
+    }
+}
+
+@media (max-width: 480px) {
+    .reports-sidebar {
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
 }

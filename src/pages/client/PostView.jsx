@@ -131,7 +131,7 @@ const PostView = () => {
                                     <h1>{post.title}</h1>
                                     <p className="post-view__date">{formatRelativeTime(post.created_at)}</p>
                                 </div>
-                                <Badge status={post.status} />
+                                <Badge status={post.status} mediaUrls={post.media_urls} />
                             </div>
 
                             {/* Media Section */}
@@ -178,7 +178,7 @@ const PostView = () => {
                                         onClick={() => handleApproval(APPROVAL_ACTIONS.APPROVED)}
                                         disabled={submitting}
                                     >
-                                        <i className="ph ph-check"></i> Aprovar
+                                        <i className="ph ph-check"></i> {post.media_urls?.length > 0 ? 'Aprovar Postagem' : 'Aprovar Texto'}
                                     </Button>
                                     <Button
                                         variant="warning"

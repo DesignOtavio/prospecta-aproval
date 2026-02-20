@@ -15,6 +15,7 @@ export const POST_STATUS = {
 export const APPROVAL_ACTIONS = {
     APPROVED: 'approved',
     CHANGES_REQUESTED: 'changes_requested',
+    TEXT_APPROVED: 'text_approved',
 };
 
 // Activity types

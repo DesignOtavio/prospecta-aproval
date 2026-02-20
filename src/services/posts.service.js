@@ -215,6 +215,13 @@ export const addComment = async (postId, userId, content, markers = null) => {
             details: { comment: content },
         });
 
+        // Trigger Webhook
+        triggerWebhook(postId, 'comment.added', {
+            comment: content,
+            user_id: userId,
+            comment_id: data.id
+        });
+
         return { data, error: null };
     } catch (error) {
         return { data: null, error };
@@ -270,6 +277,14 @@ export const createApprovalAction = async (postId, userId, action, notes = '') =
             user_id: userId,
             action_type: actionType,
             details: { action, notes },
+        });
+
+        // Trigger Webhook
+        triggerWebhook(postId, 'post.' + action, {
+            action,
+            notes,
+            user_id: userId,
+            new_status: newStatus
         });
 
         return { data: approvalData, error: null };
@@ -389,4 +404,64 @@ export const deletePost = async (postId, userId) => {
     } catch (error) {
         return { error };
     }
+};
+/**
+ * Trigger client webhook
+ */
+export const triggerWebhook = async (postId, event, payload) => {
+    try {
+        // Fetch post and client webhook info
+        const { data: post, error } = await supabase
+            .from(TABLES.POSTS)
+            .select(`
+                id,
+                title,
+                client_id,
+                prpsct_clients (
+                    webhook_url,
+                    webhook_secret
+                )
+            `)
+            .eq('id', postId)
+            .single();
+
+        if (error || !post?.prpsct_clients?.webhook_url) return;
+
+        const webhookUrl = post.prpsct_clients.webhook_url;
+        const body = JSON.stringify({
+            event,
+            timestamp: new Date().toISOString(),
+            post_id: postId,
+            post_title: post.title,
+            client_id: post.client_id,
+            payload
+        });
+
+        // Fire and forget (don't await to avoid slowing down user experience)
+        fetch(webhookUrl, {
+            method: 'POST',
+            body
+        }).catch(err => console.error('[Webhook Error]', err));
+
+        console.log(`[Webhook Sent] Event: ${event} to ${webhookUrl}`);
+    } catch (err) {
+        console.error('[Webhook Exception]', err);
+    }
+};
+
+export default {
+    fetchClientPosts,
+    fetchAllPosts,
+    fetchPost,
+    createPost,
+    updatePostStatus,
+    fetchComments,
+    addComment,
+    createApprovalAction,
+    logActivity,
+    fetchActivityLogs,
+    fetchAllActivities,
+    updatePost,
+    deletePost,
+    triggerWebhook
 };

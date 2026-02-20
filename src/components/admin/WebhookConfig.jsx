@@ -69,8 +69,28 @@ const WebhookConfig = () => {
         const config = configs[clientId];
         if (!config.webhook_url) return alert('Configure uma URL primeiro.');
 
-        alert(`Simulando envio de webhook para: ${config.webhook_url}\n\nPayload: { event: "ping", timestamp: "${new Date().toISOString()}" }`);
-        // In a real scenario, this would call an Edge Function to fire the webhook
+        try {
+            const body = JSON.stringify({
+                event: "webhook.test",
+                timestamp: new Date().toISOString(),
+                client_id: clientId,
+                message: "Teste de conexão do Prospecta Approval"
+            });
+
+            const response = await fetch(config.webhook_url, {
+                method: 'POST',
+                body
+            });
+
+            if (response.ok) {
+                alert('Webhook enviado com sucesso! Verifique seu n8n.');
+            } else {
+                alert(`Erro ao enviar: ${response.status} ${response.statusText}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Falha na conexão. Verifique se o n8n está acessível e se a URL está correta.');
+        }
     };
 
     if (loading) return <div>Carregando...</div>;

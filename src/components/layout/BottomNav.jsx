@@ -27,6 +27,16 @@ const BottomNav = () => {
                 </NavLink>
             )}
 
+            {!isAdmin && (
+                <NavLink
+                    to={ROUTES.CLIENT_REPORTS}
+                    className={({ isActive }) => `bottom-nav__item ${isActive ? 'active' : ''}`}
+                >
+                    <i className="ph ph-chart-bar icon"></i>
+                    <span>Relatórios</span>
+                </NavLink>
+            )}
+
             <NavLink
                 to={isAdmin ? ROUTES.ADMIN_SETTINGS : "/profile"}
                 className={({ isActive }) => `bottom-nav__item ${isActive ? 'active' : ''}`}

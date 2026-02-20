@@ -28,7 +28,23 @@ export const AuthProvider = ({ children }) => {
                     // Verifica se ainda é válido (poderíamos checar no banco, mas por performance/simplicidade aceitamos por enquanto)
                     // Idealmente: RPC get_client_by_id para confirmar
                     setUser(parsedSession.user);
-                    setProfile(parsedSession.profile);
+
+                    // Garante que o perfil existe no banco (Upsert)
+                    // Isso resolve o erro de Foreign Key (FK) para sessões já logadas
+                    if (parsedSession.user.auth_type === 'table') {
+                        await supabase
+                            .from(TABLES.PROFILES)
+                            .upsert({
+                                id: parsedSession.user.id,
+                                full_name: parsedSession.profile?.full_name || parsedSession.user.email?.split('@')[0],
+                                role: 'client'
+                            });
+
+                        setProfile(parsedSession.profile);
+                    } else {
+                        fetchProfile(parsedSession.user.id);
+                    }
+
                     setLoading(false);
                     return; // Retorna antecipado se achou sessão tabela
                 } catch (e) {
@@ -105,13 +121,29 @@ export const AuthProvider = ({ children }) => {
                             role: 'client',
                             auth_type: 'table'
                         };
+
+                        setUser(tableUser);
+
+                        // Garante que o perfil existe no banco (Upsert)
+                        // Isso resolve o erro de Foreign Key (FK) em Approval Actions e Comments
+                        const { error: profileError } = await supabase
+                            .from(TABLES.PROFILES)
+                            .upsert({
+                                id: client.id,
+                                full_name: client.name,
+                                role: 'client'
+                            });
+
+                        if (profileError) {
+                            console.error('Erro ao garantir perfil para login de tabela:', profileError);
+                        }
+
                         const tableProfile = {
                             id: client.id,
                             full_name: client.name,
                             role: 'client'
                         };
 
-                        setUser(tableUser);
                         setProfile(tableProfile);
 
                         // Persiste sessão

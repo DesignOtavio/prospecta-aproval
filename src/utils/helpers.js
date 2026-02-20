@@ -33,7 +33,7 @@ export const formatRelativeTime = (dateString) => {
 /**
  * Get status badge color
  */
-export const getStatusColor = (status) => {
+export const getStatusColor = (status, mediaUrls = []) => {
     switch (status) {
         case POST_STATUS.APPROVED:
             return 'success';
@@ -48,15 +48,17 @@ export const getStatusColor = (status) => {
 /**
  * Get status label
  */
-export const getStatusLabel = (status) => {
+export const getStatusLabel = (status, mediaUrls = []) => {
+    const hasMedia = mediaUrls && mediaUrls.length > 0;
+
     switch (status) {
         case POST_STATUS.APPROVED:
-            return 'Aprovado';
+            return hasMedia ? 'Aprovado' : 'Texto Aprovado';
         case POST_STATUS.CHANGES_REQUESTED:
             return 'Alterações Solicitadas';
         case POST_STATUS.PENDING:
         default:
-            return 'Pendente';
+            return hasMedia ? 'Design em Aprovação' : 'Texto em Aprovação';
     }
 };
 

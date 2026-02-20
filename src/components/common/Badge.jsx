@@ -1,9 +1,9 @@
 import { getStatusColor, getStatusLabel } from '../../utils/helpers';
 import './Badge.css';
 
-const Badge = ({ status, label, variant, className = '' }) => {
-    const badgeVariant = variant || getStatusColor(status);
-    const badgeLabel = label || getStatusLabel(status);
+const Badge = ({ status, label, variant, mediaUrls, className = '' }) => {
+    const badgeVariant = variant || getStatusColor(status, mediaUrls);
+    const badgeLabel = label || getStatusLabel(status, mediaUrls);
 
     const classes = [
         'badge',
