@@ -1,0 +1,119 @@
+.order-request-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.order-request-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.order-request-form label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.order-request-form label .optional-tag {
+    font-weight: 400;
+    color: #9ca3af;
+    font-size: 0.78rem;
+    margin-left: 4px;
+}
+
+.order-request-form input[type="text"],
+.order-request-form input[type="date"],
+.order-request-form textarea {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #111827;
+    background: #f9fafb;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.order-request-form input[type="text"]:focus,
+.order-request-form input[type="date"]:focus,
+.order-request-form textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    background: #fff;
+}
+
+.order-request-form textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.order-request-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.order-request-form .btn-cancel {
+    padding: 0.55rem 1.3rem;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.order-request-form .btn-cancel:hover {
+    background: #f3f4f6;
+}
+
+.order-request-form .btn-submit {
+    padding: 0.55rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.15s;
+}
+
+.order-request-form .btn-submit:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.order-request-form .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.order-request-form .form-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    color: #b91c1c;
+    font-size: 0.875rem;
+    padding: 0.65rem 1rem;
+}
+
+.order-request-form .form-success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    color: #166534;
+    font-size: 0.875rem;
+    padding: 0.65rem 1rem;
+    text-align: center;
+}

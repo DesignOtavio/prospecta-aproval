@@ -18,6 +18,7 @@ export const TABLES = {
   APPROVAL_ACTIONS: 'prpsct_approval_actions',
   ACTIVITY_LOGS: 'prpsct_activity_logs',
   LOOKER_REPORTS: 'prpsct_looker_reports',
+  ORDER_REQUESTS: 'prpsct_order_requests',
 };
 
 // Storage buckets
