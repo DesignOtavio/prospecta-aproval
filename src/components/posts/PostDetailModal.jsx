@@ -261,7 +261,7 @@ const PostDetailModal = ({ post, onClose, onUpdate }) => {
                                 {currentMedia.type === 'video' ? (
                                     <video src={currentMedia.url} controls className="media-content" />
                                 ) : (
-                                    <div className="media-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+                                    <div className="media-wrapper">
                                         <img
                                             src={currentMedia.url || '/placeholder.png'}
                                             alt={post.title}
