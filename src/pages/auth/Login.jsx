@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { ROUTES } from '../../utils/constants';
@@ -13,28 +13,31 @@ const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { signIn, isAdmin } = useAuth();
+    const { signIn, isAdmin, user, profile } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user && profile) {
+            if (isAdmin) {
+                navigate(ROUTES.ADMIN_DASHBOARD);
+            } else {
+                navigate(ROUTES.CLIENT_DASHBOARD);
+            }
+        }
+    }, [user, profile, isAdmin, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        const { data, error } = await signIn(email, password);
+        const { error } = await signIn(email, password);
 
         if (error) {
             setError('Email ou senha inválidos');
             setLoading(false);
-            return;
         }
-
-        // Redirect based on role
-        if (isAdmin) {
-            navigate(ROUTES.ADMIN_DASHBOARD);
-        } else {
-            navigate(ROUTES.CLIENT_DASHBOARD);
-        }
+        // Redirect is now handled by the useEffect above once user, profile and role are loaded
     };
 
     return (
